@@ -1,0 +1,9 @@
+.home-page {
+    background-image: url('../../../assets/home/complete-registration/descarga.png');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
