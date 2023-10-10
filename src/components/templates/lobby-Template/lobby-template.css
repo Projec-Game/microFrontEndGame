@@ -1,0 +1,20 @@
+
+.lobby{
+width: 100%;
+height: 100%;
+align-items: center;
+align-content: center;
+justify-content: center;
+}
+/* form{
+    height: 100vh;
+    width: 100%;
+} */
+
+.lobby__container{
+    width: 100%;
+    height: 100vh;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}

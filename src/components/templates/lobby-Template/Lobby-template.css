@@ -1,0 +1,39 @@
+.game-form {
+    text-align: center;
+    margin: 20px;
+    padding: 20px;
+    background-color: #333;
+    border-radius: 10px;
+    color: white;
+  }
+  
+  .game-form h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .game-form label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .game-form input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .game-form button {
+    background-color: #4fc3dc;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .game-form button:hover {
+    background-color: #357b8f;
+  }
