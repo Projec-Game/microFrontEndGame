@@ -1,9 +1,14 @@
-// components/page/home/HomePage.js
-import React from 'react';
+import React, { useEffect } from 'react';
+import Swal from 'sweetalert2';
 import './home-page.css';
 import Lobby from '../../templates/lobby-Template/lobby-template';
 
 const HomePage = () => {
+  useEffect(() => {
+    // Muestra una alerta de Swal cuando el componente se monta
+    Swal.fire('Bienvenido!', 'Coloca la pantalla horizontal', 'warning');
+  }, []);
+
   return (
     <div className="container">
       <div className='bubbles'>

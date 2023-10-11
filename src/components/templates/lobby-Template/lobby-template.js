@@ -1,9 +1,10 @@
 import React from 'react';
 import { useFormik } from 'formik';
-// import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import "./Lobby-template.css";
 
 const Lobby = () => {
+  const navigate = useNavigate(); // Obtiene el objeto de navegación
   const formik = useFormik({
     initialValues: {
       apodo: '',
@@ -23,16 +24,12 @@ const Lobby = () => {
       return errors;
     },
     onSubmit: (values) => {
-      // Aquí puedes realizar acciones con los datos ingresados, como enviarlos a un servidor o guardarlos en el estado de la aplicación.
-    //   console.log('Valores enviados:', values);
-
       // Guardar los valores en el Local Storage
       localStorage.setItem('name', values.apodo);
       localStorage.setItem('color', values.color);
 
-    //   if (this.storedName && this.storedColor) {
-    //     useHistory.push('/gameplay'); // Ajusta la ruta de acuerdo a tu configuración
-    //   }
+      // Redirige al usuario a la vista GamePlayTemplate
+      navigate('/game-play'); // Ajusta la ruta de acuerdo a tu configuración
     },
   });
 
@@ -40,7 +37,7 @@ const Lobby = () => {
     <div className="game-form">
       <h2>Ingresa al juego</h2>
       <form onSubmit={formik.handleSubmit}>
-        <label htmlFor="apodo">Apodo:</label>
+      <label htmlFor="apodo">Apodo:</label>
         <input
           type="text"
           id="apodo"
@@ -69,3 +66,8 @@ const Lobby = () => {
 };
 
 export default Lobby;
+
+
+
+
+
