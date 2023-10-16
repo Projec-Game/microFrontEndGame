@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const Game = () => {
   
-  const [playerPosition, setPlayerPosition] = useState({ x: window.innerWidth / 2 - 25, y: window.innerHeight - 75 });
+  const [playerPosition, setPlayerPosition] = useState({ x: window.innerWidth / 2 - 24, y: window.innerHeight - 105 });
   const [obstacles, setObstacles] = useState([]);
   const [score, setScore] = useState(0);
   const [isGameRunning, setIsGameRunning] = useState(true);
