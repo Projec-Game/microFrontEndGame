@@ -10,6 +10,10 @@ const Game = () => {
   // const [maxScorePlayer, setMaxScorePlayer] = useState('Jugador Anónimo');
   const obstacleSpeed = 5;
   const [playerName] = useState(localStorage.getItem('name'));
+  const [lives, setLives] = useState(3); // Comenzamos con 3 vidas
+  const [lifeImages, setLifeImages] = useState([1, 2, 3]); // Puedes cargar tus imágenes de vidas aquí
+  const [isObstacleGenerationPaused, setIsObstacleGenerationPaused] = useState(false);
+
 
   useEffect(() => {
     const handleOrientation = (event) => {
@@ -35,7 +39,7 @@ const Game = () => {
 
   useEffect(() => {
     const obstacleGenerator = setInterval(() => {
-      if (isGameRunning) {
+      if (isGameRunning && !isObstacleGenerationPaused) {
         const newObstacle = { id: Date.now(), x: Math.random() * (window.innerWidth - 50), y: -50 };
         setObstacles((prev) => [...prev, newObstacle]);
       }
@@ -57,7 +61,7 @@ const Game = () => {
       clearInterval(obstacleGenerator);
       clearInterval(obstacleMoveInterval);
     };
-  }, [isGameRunning]);
+  }, [isGameRunning, isObstacleGenerationPaused]);
 
   useEffect(() => {
     if (isGameRunning) {
@@ -69,35 +73,52 @@ const Game = () => {
             playerPosition.y < obstacle.y + 50 &&
             playerPosition.y + 50 > obstacle.y
           ) {
-            setIsGameRunning(false);
+            if (lives > 0) {
+              // El jugador colisionó con un obstáculo, eliminamos una vida
+              setLives((prev) => prev - 1);
+  
+              // Eliminamos la imagen de vida correspondiente
+              setLifeImages((prev) => prev.slice(0, prev.length - 1));
+            }
+  
+            // Si se quedan sin vidas, termina el juego
+            if (lives === 1) {
+              setIsGameRunning(false);
+            }
+  
+            // Eliminamos el obstáculo
+            setObstacles((prev) =>
+              prev.filter((ob) => ob.id !== obstacle.id)
+            );
           }
         }
       };
-
+  
       checkCollision();
-
+  
       if (isGameRunning) {
         setScore((prev) => prev + 1);
       }
     }
-  }, [isGameRunning, obstacles, playerPosition]);
+  }, [isGameRunning, obstacles, playerPosition, lives]);
 
   useEffect(() => {
     if (!isGameRunning) {
+      setIsObstacleGenerationPaused(true); // Pausar la generación de obstáculos
       if (score > maxScore) {
         setMaxScore(score);
-        // Puedes pedir al jugador que ingrese su nombre aquí y almacenarlo en maxScorePlayer
-        // Por ahora, simplemente estableceremos un valor predeterminado
-        // setMaxScorePlayer('Jugador Anónimo');
       }
     }
   }, [isGameRunning, score, maxScore]);
 
   const resetGame = () => {
-    setPlayerPosition({ x: window.innerWidth / 2 - 25, y: window.innerHeight - 75 });
+    setPlayerPosition({ x: window.innerWidth / 2 - 25, y: window.innerHeight - 105 });
     setObstacles([]);
     setScore(0);
+    setLives(3); // Reiniciar las vidas
     setIsGameRunning(true);
+    setIsObstacleGenerationPaused(false);
+    setLifeImages([1, 2, 3])
   };
 
   return (
@@ -132,8 +153,18 @@ const Game = () => {
         </div>
       ))}
       <p style={{ position: 'absolute', top: '10px', left: '10px', color: 'white' }}>
-        Score: {score} | Max Score: {maxScore} (Jugador: {playerName})
-      </p>
+  Score: {score} | Max Score: {maxScore} (Jugador: {playerName})
+</p>
+<div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+  {lifeImages.map((image, index) => (
+    <img
+      key={index}
+      src={`ruta_de_tu_imagen_de_vida.png`} // Reemplaza con la ruta de tu imagen de vida
+      alt={`Vida ${index + 1}`}
+      style={{ width: '30px', height: '30px', marginRight: '5px' }}
+    />
+  ))}
+</div>
       {!isGameRunning && (
         <button onClick={resetGame} style={{ position: 'absolute', top: '50px', left: '10px' }}>
           Reiniciar
