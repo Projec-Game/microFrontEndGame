@@ -1,4 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import GameOver from '../game-over-template/game-over-template';
+import { Assets } from '../../../assets';
+import "./game-play-template.css";
+// import Particles from 'particles.js';
+
+
+
+
+ 
+const obstacleImages = [
+  // {Assets.GameIcons.asteroide_icon},
+  Assets.GameIcons.asteroide_icon,
+  Assets.GameIcons.nebula,
+  Assets.GameIcons.ovni
+  // 'ruta_imagen_obstaculo_2',
+  // 'ruta_imagen_obstaculo_3',
+  // Agrega más rutas de imágenes de obstáculos aquí
+];
+
+const getRandomObstacleImage = () => {
+  // Genera un índice aleatorio para seleccionar una imagen de obstáculo
+  const randomIndex = Math.floor(Math.random() * obstacleImages.length);
+  return obstacleImages[randomIndex];
+};
 
 const Game = () => {
   
@@ -9,29 +33,31 @@ const Game = () => {
   const [maxScore, setMaxScore] = useState(0);
   // const [maxScorePlayer, setMaxScorePlayer] = useState('Jugador Anónimo');
   const obstacleSpeed = 5;
-  const [playerName] = useState(localStorage.getItem('name'));
+  // const [playerName] = useState(localStorage.getItem('name'));
   const [lives, setLives] = useState(3); // Comenzamos con 3 vidas
   const [lifeImages, setLifeImages] = useState([1, 2, 3]); // Puedes cargar tus imágenes de vidas aquí
   const [isObstacleGenerationPaused, setIsObstacleGenerationPaused] = useState(false);
 
 
+
+
   useEffect(() => {
     const handleOrientation = (event) => {
       if (isGameRunning) {
-        const x = event.beta;
-        const newX = playerPosition.x - x * 2;
+        const gamma = event.gamma;
+        // Invertimos la dirección basada en el valor de gamma
+        const newX = playerPosition.x + gamma * 2;
         const minX = 0;
         const maxX = window.innerWidth - 50;
         const clampedX = Math.min(Math.max(newX, minX), maxX - 50);
         setPlayerPosition((prev) => ({ ...prev, x: clampedX }));
       }
     };
-    
-
+  
     if (isGameRunning) {
       window.addEventListener('deviceorientation', handleOrientation, true);
     }
-
+  
     return () => {
       window.removeEventListener('deviceorientation', handleOrientation);
     };
@@ -40,7 +66,12 @@ const Game = () => {
   useEffect(() => {
     const obstacleGenerator = setInterval(() => {
       if (isGameRunning && !isObstacleGenerationPaused) {
-        const newObstacle = { id: Date.now(), x: Math.random() * (window.innerWidth - 50), y: -50 };
+        const newObstacle = {
+          id: Date.now(),
+          x: Math.random() * (window.innerWidth - 50),
+          y: -50,
+          image: getRandomObstacleImage(), // Selección aleatoria de una imagen de obstáculo
+        };
         setObstacles((prev) => [...prev, newObstacle]);
       }
     }, 1000);
@@ -64,6 +95,33 @@ const Game = () => {
   }, [isGameRunning, isObstacleGenerationPaused]);
 
   useEffect(() => {
+    // const particleConfig = {
+    //   particles: {
+    //     number: {
+    //       value: 10, // Ajusta la cantidad de partículas
+    //     },
+    //     color: {
+    //       value: '#ff0000', // Ajusta el color de las partículas
+    //     },
+    //     shape: {
+    //       type: 'circle', // Ajusta la forma de las partículas
+    //     },
+    //     opacity: {
+    //       value: 0.5, // Ajusta la opacidad de las partículas
+    //     },
+    //     size: {
+    //       value: 3, // Ajusta el tamaño de las partículas
+    //     },
+    //   },
+    //   interactivity: {
+    //     events: {
+    //       onhover: {
+    //         enable: false,
+    //         mode: 'repulse',
+    //       },
+    //     },
+    //   },
+    // };
     if (isGameRunning) {
       const checkCollision = () => {
         for (const obstacle of obstacles) {
@@ -79,6 +137,8 @@ const Game = () => {
   
               // Eliminamos la imagen de vida correspondiente
               setLifeImages((prev) => prev.slice(0, prev.length - 1));
+              
+              // Particles.init('collision-particles', particleConfig);
             }
   
             // Si se quedan sin vidas, termina el juego
@@ -121,56 +181,83 @@ const Game = () => {
     setLifeImages([1, 2, 3])
   };
 
+  useEffect(() => {
+    if (lives === 0) {
+      setIsGameRunning(false);
+    }
+  }, [lives]);
+
   return (
-    <div style={{ position: 'relative', height: '100vh' }}>
-      <div
-        style={{
-        position: 'absolute',
-        left: `${playerPosition.x}px`,
-        top: `${playerPosition.y}px`,
-        width: '100px', // Ajusta el ancho según el tamaño de la imagen
-        height: '100px', // Ajusta la altura según el tamaño de la imagen
-        backgroundImage: `url(${require('./../../../assets/home/complete-registration/player.gif')})`,// Reemplaza 'url_de_la_imagen.gif' con la URL de tu imagen animada
-        backgroundSize: 'cover', // Ajusta el tamaño de la imagen según sea necesario
-        backgroundRepeat: 'no-repeat',
-        }}
-      >
-        {/* {playerName} */}
+    <div>
+      <div className="space-background">
+        {
+          Array.from({ length: 100 }, (_, i) => (
+            <div
+              key={i}
+              className="stars"
+              style={{
+                '--star-x': Math.random(),
+                '--star-y': Math.random(),
+              }}
+            ></div>
+          ))
+        }
       </div>
-      {obstacles.map((obstacle) => (
+      <div style={{ position: 'relative', height: '100vh' }}>
         <div
+          style={{
+          position: 'absolute',
+          left: `${playerPosition.x}px`,
+          top: `${playerPosition.y}px`,
+          width: '50px', // Ajusta el ancho según el tamaño de la imagen
+          height: '50px', // Ajusta la altura según el tamaño de la imagen
+          backgroundImage: `url(${Assets.GameIcons.nave_spacial})`,// Reemplaza 'url_de_la_imagen.gif' con la URL de tu imagen animada
+          backgroundSize: 'cover', // Ajusta el tamaño de la imagen según sea necesario
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: 'white'
+          }}
+        >
+          {/* {playerName} */}
+        </div>
+        {obstacles.map((obstacle) => (
+          <div
           key={obstacle.id}
           style={{
             position: 'absolute',
             left: `${obstacle.x}px`,
             top: `${obstacle.y}px`,
-            width: '50px',
-            height: '50px',
-            background: 'red',
+            width: '30px',
+            height: '30px',
+            backgroundImage: `url(${obstacle.image})`, // Usar la imagen seleccionada
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: 'white'
           }}
-        >
-          Obstacle
+          ></div>
+        ))}
+        <p style={{ position: 'absolute', top: '10px', left: '10px', color: 'white' }}>
+          Score: {score} 
+          {/* | Max Score: {maxScore} (Jugador: {playerName}) */}
+        </p>
+        <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+          {lifeImages.map((image, index) => (
+            <img
+              key={index}
+              src={Assets.SharedIcons.icon_life}
+              alt={`Vida ${index + 1}`}
+              style={{ width: '30px', height: '30px', marginRight: '5px' }}
+            />
+          ))}
         </div>
-      ))}
-      <p style={{ position: 'absolute', top: '10px', left: '10px', color: 'white' }}>
-  Score: {score} | Max Score: {maxScore} (Jugador: {playerName})
-</p>
-<div style={{ position: 'absolute', top: '10px', right: '10px' }}>
-  {lifeImages.map((image, index) => (
-    <img
-      key={index}
-      src={`ruta_de_tu_imagen_de_vida.png`} // Reemplaza con la ruta de tu imagen de vida
-      alt={`Vida ${index + 1}`}
-      style={{ width: '30px', height: '30px', marginRight: '5px' }}
-    />
-  ))}
-</div>
-      {!isGameRunning && (
-        <button onClick={resetGame} style={{ position: 'absolute', top: '50px', left: '10px' }}>
-          Reiniciar
-        </button>
-      )}
-    </div>
+        {/* <div id="collision-particles" style={{ position: 'absolute' }}></div> */}
+        {!isGameRunning && lives === 0 && (
+          <GameOver 
+          onRestart={resetGame}
+          score={score}
+          maxScore={maxScore}/>
+        )}
+      </div>
+    </div> 
   );
 };
 

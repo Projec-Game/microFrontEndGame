@@ -1,7 +1,7 @@
 // shared-icons
-import icon_logo from "./icons/icon_logo.svg";
+import icon_life from "./icons/lifes.svg";
 
 export const SharedIcons = {
-    icon_logo,
+    icon_life
 
 }
